@@ -285,7 +285,7 @@ export default function GigDashboard() {
                 >
                   <div className="relative">
                     <img
-                      src={gig.sampleMedia[0]?.mediaUrl || "/placeholder.svg?height=180&width=320"}
+                      src="/src/assets/homepage.jpg"
                       width={320}
                       height={180}
                       alt={gig.title}
@@ -326,7 +326,7 @@ export default function GigDashboard() {
                       <p className="text-sm font-medium text-gray-500">
                         Starting at{" "}
                         <span className="text-xl font-bold text-gray-900">
-                          ${gig.pricing[0]?.price || 0} {/* Fixed */}
+                          ${gig.pricing || 0} {/* Fixed */}
                         </span>
                       </p>
                       <div className="flex space-x-1">
