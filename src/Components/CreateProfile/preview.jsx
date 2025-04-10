@@ -1,130 +1,213 @@
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/userSlice";
-import axiosInstance from "../../utils/axios";
+import { CheckCircle } from "lucide-react"
 
 function PreviewSection({ title, children }) {
   return (
-    <div className="border-b border-gray-200 pb-4">
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+    <div className="border-b border-gray-200 pb-6 mb-6">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{title}</h3>
       <div className="space-y-2">{children}</div>
     </div>
-  );
+  )
 }
 
 export default function Preview({ data, onEdit, onSubmit }) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleSubmit = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please log in to save your profile.");
-        return;
-      }
-
-      const profileData = {
-        city: data.city,
-        state: data.state,
-        pinCode: data.pinCode,
-        jobTitle: data.jobTitle,
-        overview: data.overview,
-        skills: data.skills,
-        languages: data.languages,
-        tools: data.tools,
-        equipmentCameras: data.equipmentCameras,
-        equipmentLenses: data.equipmentLenses,
-        equipmentLighting: data.equipmentLighting,
-        equipmentOther: data.equipmentOther,
-        certifications: data.certifications,
-        minimumRate: data.minimumRate,
-        maximumRate: data.maximumRate,
-        weeklyHours: data.weeklyHours,
-        availabilityStatus: data.availabilityStatus,
-        hourlyRate: data.hourlyRate,
-        experienceLevel: data.experienceLevel,
-        bio: data.bio,
-        profilePicture: data.profilePicture,
-        // socialLinks omitted unless schema updated
-      };
-
-      const response = await axiosInstance.patch("/users/me", profileData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (data.portfolioVideos?.length > 0) {
-        // Placeholder for portfolio video submission
-        console.log("Portfolio videos to submit:", data.portfolioVideos);
-      }
-
-      const updatedUser = response.data.data;
-      dispatch(setUser({ ...updatedUser, token }));
-      onSubmit();
-      navigate("/freelancerProfile");
-    } catch (error) {
-      console.error("Error submitting profile:", error);
-      alert("Failed to submit profile. Please try again.");
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
-        <div className="px-8 py-6">
-          <h2 className="text-3xl font-bold mb-4">Profile Preview</h2>
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Profile Preview</h1>
+          <div className="flex items-center text-green-600">
+            <CheckCircle className="w-5 h-5 mr-2" />
+            <span className="font-medium">Ready to submit</span>
+          </div>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-8">
           <div className="space-y-6">
             <PreviewSection title="Personal Details">
-              {data.profilePicture && (
-                <img src={data.profilePicture} alt="Profile" className="w-24 h-24 rounded-full mb-2" />
-              )}
-              <p>City: {data.city}</p>
-              <p>State: {data.state}</p>
-              <p>PIN Code: {data.pinCode}</p>
-              <p>Bio: {data.bio}</p>
-            </PreviewSection>
-            <PreviewSection title="Professional Overview">
-              <p>Job Title: {data.jobTitle}</p>
-              <p>Overview: {data.overview}</p>
-              <p>Languages: {data.languages?.join(", ")}</p>
-            </PreviewSection>
-            <PreviewSection title="Skills & Portfolio">
-              <p>Skills: {data.skills?.join(", ")}</p>
-              {data.portfolioVideos?.map((video, index) => (
-                <div key={index}>
-                  <p>Video {index + 1}: {video.title}</p>
-                  <p>URL: {video.videoUrl}</p>
-                  <p>Description: {video.description}</p>
+              <div className="flex items-start">
+                {data.profilePicture && (
+                  <img
+                    src={data.profilePicture || "/placeholder.svg"}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-purple-100 mr-4"
+                  />
+                )}
+                <div className="flex-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-500">City</p>
+                      <p className="text-gray-900">{data.city || "Not specified"}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-500">State</p>
+                      <p className="text-gray-900">{data.state || "Not specified"}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-gray-500">PIN Code</p>
+                      <p className="text-gray-900">{data.pinCode || "Not specified"}</p>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
+              {data.bio && (
+                <div className="bg-gray-50 p-3 rounded-lg mt-4">
+                  <p className="text-sm font-medium text-gray-500">Bio</p>
+                  <p className="text-gray-900 whitespace-pre-line">{data.bio}</p>
+                </div>
+              )}
             </PreviewSection>
+
+            <PreviewSection title="Professional Overview">
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-sm font-medium text-gray-500">Job Title</p>
+                <p className="text-gray-900">{data.jobTitle || "Not specified"}</p>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-sm font-medium text-gray-500">Overview</p>
+                <p className="text-gray-900 whitespace-pre-line">{data.overview || "Not specified"}</p>
+              </div>
+              {data.languages?.length > 0 && (
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Languages</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {data.languages.map((lang) => (
+                      <span
+                        key={lang}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                      >
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </PreviewSection>
+
+            <PreviewSection title="Skills & Portfolio">
+              {data.skills?.length > 0 && (
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Skills</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {data.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {data.portfolioVideos?.length > 0 && (
+                <div className="space-y-3 mt-3">
+                  <p className="text-sm font-medium text-gray-500">Portfolio Videos</p>
+                  {data.portfolioVideos.map(
+                    (video, index) =>
+                      video.title && (
+                        <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                          <p className="font-medium text-gray-900">{video.title}</p>
+                          {video.videoUrl && <p className="text-sm text-gray-600">URL: {video.videoUrl}</p>}
+                          {video.description && <p className="text-sm text-gray-600 mt-1">{video.description}</p>}
+                        </div>
+                      ),
+                  )}
+                </div>
+              )}
+            </PreviewSection>
+
             <PreviewSection title="Tools, Equipment & Certifications">
-              <p>Tools: {data.tools?.join(", ")}</p>
-              <p>Cameras: {data.equipmentCameras}</p>
-              <p>Lenses: {data.equipmentLenses}</p>
-              <p>Lighting: {data.equipmentLighting}</p>
-              <p>Other Equipment: {data.equipmentOther}</p>
-              <p>Certifications: {data.certifications}</p>
+              {data.tools?.length > 0 && (
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Tools</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {data.tools.map((tool) => (
+                      <span
+                        key={tool}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+                      >
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                {data.equipmentCameras && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-500">Cameras</p>
+                    <p className="text-gray-900">{data.equipmentCameras}</p>
+                  </div>
+                )}
+                {data.equipmentLenses && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-500">Lenses</p>
+                    <p className="text-gray-900">{data.equipmentLenses}</p>
+                  </div>
+                )}
+                {data.equipmentLighting && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-500">Lighting</p>
+                    <p className="text-gray-900">{data.equipmentLighting}</p>
+                  </div>
+                )}
+                {data.equipmentOther && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-500">Other Equipment</p>
+                    <p className="text-gray-900">{data.equipmentOther}</p>
+                  </div>
+                )}
+              </div>
+              {data.certifications && (
+                <div className="bg-gray-50 p-3 rounded-lg mt-3">
+                  <p className="text-sm font-medium text-gray-500">Certifications</p>
+                  <p className="text-gray-900">{data.certifications}</p>
+                </div>
+              )}
             </PreviewSection>
+
             <PreviewSection title="Rates & Availability">
-              <p>Minimum Rate: ${data.minimumRate}</p>
-              <p>Maximum Rate: ${data.maximumRate}</p>
-              <p>Hourly Rate: ${data.hourlyRate}</p>
-              <p>Weekly Hours: {data.weeklyHours || "N/A"}</p>
-              <p>Availability: {data.availabilityStatus}</p>
-              <p>Experience Level: {data.experienceLevel}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Minimum Rate</p>
+                  <p className="text-gray-900">${data.minimumRate || "Not specified"}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Maximum Rate</p>
+                  <p className="text-gray-900">${data.maximumRate || "Not specified"}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Hourly Rate</p>
+                  <p className="text-gray-900">${data.hourlyRate || "Not specified"}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Weekly Hours</p>
+                  <p className="text-gray-900">{data.weeklyHours || "Not specified"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Availability</p>
+                  <p className="text-gray-900">{data.availabilityStatus || "Not specified"}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-gray-500">Experience Level</p>
+                  <p className="text-gray-900">{data.experienceLevel || "Not specified"}</p>
+                </div>
+              </div>
             </PreviewSection>
           </div>
+
           <div className="mt-8 flex justify-between">
             <button
               onClick={onEdit}
-              className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               Edit
             </button>
             <button
-              onClick={handleSubmit}
-              className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              onClick={onSubmit}
+              className="py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               Submit
             </button>
@@ -132,5 +215,5 @@ export default function Preview({ data, onEdit, onSubmit }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

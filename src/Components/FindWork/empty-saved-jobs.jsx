@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { Heart, Play, Film, Star, Clock, Search } from 'lucide-react'
 

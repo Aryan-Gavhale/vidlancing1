@@ -52,6 +52,8 @@ const ClientProfile = lazy(() => import('./Components/ClientProfile/Page'));
 const GigDashboard = lazy(() => import('./Components/GigsDashboard/Page'));
 const CreateGigForm = lazy(() => import('./Components/GigsDashboard/GigForm'));
 const Settings = lazy(() => import('./Components/Settings/settings'));
+const JobDescriptionPage = lazy(() => import('./Components/JobDescription/Page'));
+const GigMainPage = lazy(() => import('./Components/GigSection/Page'));
 
 function NavbarPage() {
   const user = useSelector((state) => state.user.user);
@@ -151,6 +153,9 @@ function NavbarPage() {
             <Route path="/gigs-dashboard" element={<GigDashboard />} />
             <Route path="/create-gig" element={<CreateGigForm />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/job/:jobId" element={<JobDescriptionPage />} />
+            <Route path="/gigpage" element={<GigMainPage />} />
+
             <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           </Routes>
         </Suspense>
